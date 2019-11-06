@@ -64,8 +64,18 @@ function drawPriorityChart(){
     // Activity I. TODO: retrieve xAxis and adjust tick parameters
 
     // Activity I. TODO: draw the priority vis
+    barChart.width(500)
+    .y(d=>d.title)
+    .x(d=>d.votes)
+    .layout('vertical')
+    .margin({top:0, right:0, bottom:50, left:250})
     
+    barChart.xAxis().tickValues(null)
+    barChart.xAxis().tickFormat(d3.format('.2s'))
+    priorityVis.datum(priorityData)
+    .call(barChart)
 }
+
 function getAgeData(data, range){
     let filtered = range===undefined?data:data.filter(function(d){
         return d.time >= range[0] && d.time <= range[1];
@@ -137,16 +147,22 @@ function transform(perDayData, metaData){
     });
     return allData;
 }
+
 function zoomed(range){
     // console.log('date range', range);
     d3.select("#time-period-min").text(dateFormatter(range[0]));
     d3.select("#time-period-max").text(dateFormatter(range[1]));
-
+    dateRange = range
+    drawAgeChart()
+    drawPriorityChart()
     // Activity III. TODO: update dateRage and call bar charts again
     
 }
 
 d3.select("#reset-zoom").on("click", function(){
     // Activity IV. TODO: Reset Zoom
-    
+    dateRange = d3.extent(viewData, d=>d.time)
+    countVis.datum(viewData)
+        .call(areaChart)
+
 });

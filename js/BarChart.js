@@ -39,14 +39,46 @@ export default function BarChart(){
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
             if (layout==='horizontal'){
-                // Activity I. TODO: update scales and axes
-   
 
+                // Activity I. TODO: update scales and axes
+                xScale.range([0, innerWidth])
+                .domain(data.map(xValue))
                 // Activity I. TODO: draw bars
-              
+                yScale.range([innerHeight, 0])
+                .domain([0, d3.max(data, yValue)])
+                yAxis.scale(xScale)
+                yAxis.scale(yScale)
+
+                g.selectAll('.bar')
+                    .data(data)
+                    .join('rect')
+                    .attr('class', 'bar')
+                    .attr('fill', '#abcdef')
+                    .attr('x', d => xScale(xValue(d)))
+                    .attr('y', d => yScale(yValue(d)))
+                    .attr('height', d => yScale(0) - yScale(yValue(d)))
+                    .attr('width', xScale.bandwidth())
+
             }else{
                 // Activity I. TODO: update scales and axes
-   
+                yScale.range([0, innerWidth])
+                .domain([0, d3.max(data, xValue)])
+
+                xScale.range([0, innerHeight])
+                .domain(data.map(yValue))
+
+                xAxis.scale(yScale)
+                yAxis.scale(xScale)
+
+                g.selectAll('.bar')
+                    .data(data)
+                    .join('rect')
+                    .attr('class', 'bar')
+                    .attr('fill', '#abcdef')
+                    .attr('x', 0)
+                    .attr('y', d => xScale(yValue(d)))
+                    .attr('height', xScale.bandwidth())
+                    .attr('width', d=>yScale(xValue(d)))
 
                 // Activity I. TODO: draw bars
             }

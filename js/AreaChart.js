@@ -67,16 +67,22 @@ export default function AreaChart(){
             .datum(data)
             .join('path')
             .attr("fill", "steelblue")
-            .attr("clip-path", "url(#clip)")
+            // .attr("clip-path", "url(#clip)")
             .attr("d", area);
             
 
             // initialize zooming
             if (zooming){
                 // Activity II. TODO
+                zoom.scaleExtent([1, 8])
+                .translateExtent([[0, 0], [innerWidth, innerHeight]])
+                .extent([[0, 0], [innerWidth, innerHeight]])
+                .on('zoom', handleZoom)
+
+                svg.call(zoom)
             }else{
                 // Activity II. TODO
-                
+                svg.on('.zoom', null)
             }
 
             // Append x-axis
@@ -84,7 +90,7 @@ export default function AreaChart(){
             .attr("transform", "translate(0," + innerHeight + ")")
             .call(xAxis);
 
-            // Append y-axis
+            // Append y-axislis
             g.select('.y-axis')
             .attr("transform", "translate(0,0)")
             .call(yAxis);
@@ -137,13 +143,21 @@ export default function AreaChart(){
     function handleZoom(){
         // Activity II. TODO: update xScale's range, the area path, and x-axis
 
+        let innerWidth = width - margin.left - margin.right
+        let innerHeight = height - margin.top - margin.bottom
 
+        xScale.range([0, innerWidth].map(d => d3.event.transform.applyX(d)))
+
+        let svg = d3.select(this);
+        svg.select('.x-axis').call(xAxis)
+        svg.select('path').attr('d', area)
+
+        let rescaleX = d3.event.transform.rescaleX(xScale)
+        listeners.apply('zoomed', this, [rescaleX.domain()])
        
         // Activity III. TODO: call registered listeners for your custom 'zooomed' event
        
 
     }
-    
     return chart;
-    
 }
